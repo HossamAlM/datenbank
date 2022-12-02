@@ -6,6 +6,7 @@ Hossam Al Mustafa: 3053109
 
 Relationales Schema:
 
+-- Alle Attribute kleinschreiben?
 Artikelangebot[{_AID_,Artikelname, Beschreibungstext, Preis, Artikelbild, Stueckzahl,User.Nickname}]
 
 User[{_Nickname_,Name,E-Mail}]
