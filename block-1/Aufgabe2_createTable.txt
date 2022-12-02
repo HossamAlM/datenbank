@@ -1,3 +1,9 @@
+Gruppe-Mitglieder:
+Mervenur Seyhan: 3115745
+Reyhaneh Ozgoli: 3103822
+Pascal-Klaus Theus: 3107673
+Hossam Al Mustafa: 3053109
+
 Relationales Schema:
 
 Artikelangebot[{_AID_,Artikelname, Beschreibungstext, Preis, Artikelbild, Stueckzahl,User.Nickname}]
@@ -22,6 +28,7 @@ entfernen[{_Artikelangebot.AID_, Wunschliste.WID, _User.Nickname_}]
 
  
 
+CREATE TABLE-Statements:
 
 CREATE TABLE user (
 	nickname varchar(50) NOT NULL,
@@ -110,6 +117,16 @@ CREATE TABLE schreiben (
 
 
 	
+CREATE Trigger-Statements:
+
+-- so kann man einen Trigger in Postgresql erstellen. Mal schauen wie es in DB2 geht
+DROP TRIGGER IF EXISTS aendereStueckZahl ON kaufvorgang;
+CREATE CONSTRAINT TRIGGER aendereStueckZahl
+ AFTER INSERT
+ ON kaufvorgang
+ DEFERRABLE INITIALLY IMMEDIATE
+ FOR EACH ROW
+ EXECUTE FUNCTION aendereStueckZahlFunktion();
 
 
 
