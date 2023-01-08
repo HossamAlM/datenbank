@@ -1,0 +1,19 @@
+--trigger 1
+CREATE TRIGGER addToFrequentRatedMovies
+ AFTER INSERT ON ratings
+ REFERENCING NEW AS new
+ FOR EACH ROW MODE DB2SQL
+    IF (SELECt count(new.movieid) FROM ratings = 100) THEN
+        INSERT INTO frequentRatedMovies (movieID, title, year) 
+        VALUES (SELECT * FROM movies WHERE movieid=new.movieid)
+
+--trigger 2
+CREATE TRIGGER removeFromFrequentRatedMovies
+ AFTER DELETE ON ratings
+ REFERENCING NEW AS new
+ FOR EACH STATEMENT MODE DB2SQL
+    IF (
+        SELECt count(new.movieid) FROM ratings  < 100
+        ) THEN
+        DELETE FROM  frequentRatedMovies
+        WHERE movieID = new.movieID
