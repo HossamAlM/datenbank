@@ -43,7 +43,7 @@ CREATE TABLE artikelangebot (
 	artikelname VARCHAR(50) NOT NULL,
 	beschreibungstext CLOB(1M) NOT NULL,
 	preis DECIMAL(10,2) NOT NULL,
-	artikelbild BLOP,
+	artikelbild BLOP, -- BLOB?
 	stueckzahl SMALLINT NOT NULL CHECK(stueckzahl BETWEEN 0 AND 99),
 	PRIMARY KEY (aid),
 	FOREIGN KEY (user) REFERENCES user(nickname)
@@ -54,7 +54,7 @@ CREATE TABLE kaufvorgang (
 	lieferadresse VARCHAR(100) NOT NULL,
 	stueckzahl SMALLINT NOT NULL,
 	anzahlSterne,
-	rezension CLOB(1M),
+	rezension CLOB(1M), -- Wieso CLOB?
 	PRIMARY KEY (aid),
 	FOREIGN KEY (user) REFERENCES user(nickname)
 	
@@ -115,21 +115,6 @@ CREATE TABLE schreiben (
 --	FOREIGN KEY (user) REFERENCES user(nickname),
 --	FOREIGN KEY (wunschliste) REFERENCES wunschliste(wid) 
 --);	
-
-
-	
-CREATE Trigger-Statements:
-
--- so kann man einen Trigger in Postgresql erstellen. Mal schauen wie es in DB2 geht
-DROP TRIGGER IF EXISTS aendereStueckZahl ON kaufvorgang;
-CREATE CONSTRAINT TRIGGER aendereStueckZahl
- AFTER INSERT
- ON kaufvorgang
- DEFERRABLE INITIALLY IMMEDIATE
- FOR EACH ROW
- EXECUTE FUNCTION aendereStueckZahlFunktion();
-
-
 
 
 

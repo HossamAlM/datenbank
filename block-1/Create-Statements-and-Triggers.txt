@@ -1,11 +1,11 @@
 CREATE TABLE benutzer(
     nickname            VARCHAR(255) NOT NULL,
-    e-mail-adresse      VARCHAR(255),
-    name                VARCHAR(255),
+    e-mail-adresse      VARCHAR(255),  -- is enauk unique?
+    name                VARCHAR(255),  -- are attr, that are not primary/foreign keys, not null?
     PRIMARY KEY(nickname)
 );
 CREATE TABLE artikelangebot(
-    artikelangebot-id   INTEGER NOT NULL GENERATED ALWAYS AS idENTITY,
+    artikelangebot-id   INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
     artikelname         VARCHAR(255),
     Preis               DECIMAL,
     anzahl              INTEGER CHECK (anzahl>0 and anzahl<100)
@@ -14,12 +14,27 @@ CREATE TABLE artikelangebot(
     PRIMARY KEY(artikelangebot-id)
 );
 CREATE TABLE kaufvorgang(
-    transaktion-id      INTEGER NOT NULL GENERATED ALWAYS AS idENTITY,
+    transaktion-id      INTEGER NOT NULL GENERATED ALWAYS AS idENTITY, -- put everything here or at erwirbt?
+    nickname            VARCHAR(255) NOT NUL,
+    artikelangebot-id   INTEGER NOT NULL
     stueckzahl          INTEGER,
+    lieferadresse-id    INTEGER NOT NULL,
     PRIMARY KEY(transaktion-id)
+    FOREIGN KEY (artikelangebot-id)
+		REFERENCES artikelangebot(artikelangebot-id) 
+		ON UPDATE CASCADE 
+		ON DELETE CASCADE
+    FOREIGN KEY (nickname)
+		REFERENCES benutzer(nickname) 
+		ON UPDATE CASCADE 
+		ON DELETE CASCADE
+    FOREIGN KEY (lieferadresse-id)
+		REFERENCES lieferadresse(lieferadresse-id) 
+		ON UPDATE CASCADE 
+		ON DELETE CASCADE
 );
 CREATE TABLE lieferadresse(
-    transaktion-id      INTEGER NOT NULL,
+    lieferadresse-id    INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY,
     stadt               VARCHAR(255),
     strasse             VARCHAR(255),
     plz                 INTEGER,
@@ -73,3 +88,15 @@ CREATE TABLE wunschliste(
 		ON UPDATE CASCADE 
 		ON DELETE CASCADE
 );
+
+CREATE Trigger-Statements:
+
+-- so kann man einen Trigger in Postgresql erstellen. Mal schauen wie es in DB2 geht
+DROP INDEX IF EXISTS aendereStueckZahl ON kaufvorgang;
+CREATE TRIGGER aendereStueckZahl
+ AFTER INSERT ON kaufvorgang
+ REFERENCING NEW AS new
+ FOR EACH ROW MODE DB2SQL
+ UPDATE artikelangebot
+	SET anzahl = anzahl - new.stueckzahl
+	WHERE artikelangebot.artikelangebot-id = new.artikelangebot-id
